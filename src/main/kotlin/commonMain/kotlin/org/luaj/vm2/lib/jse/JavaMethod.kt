@@ -27,6 +27,7 @@ import org.luaj.vm2.LuaValue
 import org.luaj.vm2.Varargs
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import kotlin.reflect.full.callSuspend
 
 /**
  * LuaValue that represents a Java method.
@@ -50,7 +51,7 @@ internal class JavaMethod :
     private constructor(method: Method, fullName: String? = null) : super(method.parameterTypes, method.modifiers) {
         this.fullName = fullName
         try {
-            this.fullName = method.toGenericString()
+            this.fullName = method.name //.toGenericString()
             if (!method.isAccessible)
                 method.isAccessible = true
         } catch (s: SecurityException) {
@@ -66,11 +67,23 @@ internal class JavaMethod :
         return invokeMethod(arg.checkuserdata(), LuaValue.NONE)
     }
 
+    override suspend fun callSuspend(arg: LuaValue): LuaValue {
+        return invokeMethod1(arg.checkuserdata(), LuaValue.NONE)
+    }
+
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
         return invokeMethod(arg1.checkuserdata(), arg2)
     }
 
+    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return invokeMethod1(arg1.checkuserdata(), arg2)
+    }
+
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+        return invokeMethod(arg1.checkuserdata(), LuaValue.varargsOf(arg2, arg3))
+    }
+
+    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return invokeMethod(arg1.checkuserdata(), LuaValue.varargsOf(arg2, arg3))
     }
 
@@ -82,6 +95,19 @@ internal class JavaMethod :
         val a = convertArgs(args)
         try {
             return CoerceJavaToLua.coerce(methods[fullName]!!.invoke(instance, *a))
+        } catch (e: InvocationTargetException) {
+            throw LuaError(e.targetException)
+        } catch (e: Exception) {
+            return LuaValue.error("coercion error $e")
+        }
+
+    }
+
+    suspend fun invokeMethod1(instance: Any?, args: Varargs): LuaValue {
+        val a = convertArgs(args)
+        try {
+            var m = instance!!::class.members.single{it.name == fullName}
+            return CoerceJavaToLua.coerce(m.callSuspend(instance))
         } catch (e: InvocationTargetException) {
             throw LuaError(e.targetException)
         } catch (e: Exception) {

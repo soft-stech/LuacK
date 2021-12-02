@@ -1510,6 +1510,10 @@ abstract class LuaValue : Varargs() {
         return callmt().call(this)
     }
 
+    open suspend fun callSuspend(): LuaValue {
+        return callmt().callSuspend(this)
+    }
+
     /** Call `this` with 1 argument, including metatag processing,
      * and return only the first return value.
      *
@@ -1539,6 +1543,10 @@ abstract class LuaValue : Varargs() {
      */
     open fun call(arg: LuaValue): LuaValue {
         return callmt().call(this, arg)
+    }
+
+    open suspend fun callSuspend(arg: LuaValue): LuaValue {
+        return callmt().callSuspend(this, arg)
     }
 
     /** Convenience function which calls a luavalue with a single, string argument.
@@ -1582,6 +1590,10 @@ abstract class LuaValue : Varargs() {
         return callmt().call(this, arg1, arg2)
     }
 
+    open suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return callmt().callSuspend(this, arg1, arg2)
+    }
+
     /** Call `this` with 3 arguments, including metatag processing,
      * and return only the first return value.
      *
@@ -1612,6 +1624,10 @@ abstract class LuaValue : Varargs() {
      * @see .invokemethod
      */
     open fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+        return callmt().invoke(arrayOf(this, arg1, arg2, arg3)).arg1()
+    }
+
+    open suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return callmt().invoke(arrayOf(this, arg1, arg2, arg3)).arg1()
     }
 
@@ -1857,6 +1873,10 @@ abstract class LuaValue : Varargs() {
      * @see .invokemethod
      */
     open operator fun invoke(args: Varargs): Varargs {
+        return callmt().invoke(this, args)
+    }
+
+    open suspend fun invokeSuspend(args: Varargs): Varargs{
         return callmt().invoke(this, args)
     }
 
@@ -3612,6 +3632,10 @@ abstract class LuaValue : Varargs() {
      */
     open fun onInvoke(args: Varargs): Varargs {
         return invoke(args)
+    }
+
+    open suspend fun onInvokeSuspend(args: Varargs): Varargs {
+        return invokeSuspend(args)
     }
 
     /** Hook for implementations such as LuaJC to load the environment of the main chunk

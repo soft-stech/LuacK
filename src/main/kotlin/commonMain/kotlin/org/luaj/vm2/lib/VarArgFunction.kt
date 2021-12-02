@@ -62,11 +62,19 @@ abstract class VarArgFunction : LibFunction() {
         return invoke(arg).arg1()
     }
 
+    override suspend fun callSuspend(arg: LuaValue): LuaValue {
+        return invoke(arg).arg1()
+    }
+
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
         return invoke(LuaValue.varargsOf(arg1, arg2)).arg1()
     }
 
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+        return invoke(LuaValue.varargsOf(arg1, arg2, arg3)).arg1()
+    }
+
+    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return invoke(LuaValue.varargsOf(arg1, arg2, arg3)).arg1()
     }
 

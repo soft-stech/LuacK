@@ -91,6 +91,8 @@ abstract class Varargs : Serializable {
      */
     open fun eval(): Varargs = this
 
+    open suspend fun eval1(): Varargs = this
+
     // -----------------------------------------------------------------------
     // utilities to get specific arguments and type-check them.
     // -----------------------------------------------------------------------

@@ -6,13 +6,23 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import kotlinx.coroutines.*
 
 class CoreTest()  : Serializable {
-    fun TestTest(){
+    suspend fun TestTest(){
+        println("start delay")
+        delay(500)
+        println("end delay")
         val executionStack = luaClosure?.getExecutionContext()
         File("filename1.txt").writeBytes(serializeExecutionContext(executionStack))
         luaClosure?.stop()
         luaClosure = null
+    }
+
+    suspend fun delay(){
+        println("start delay")
+        delay(1000)
+        println("end delay")
     }
 
     private fun serializeExecutionContext(executionStack: SerializableExecutionLuaStack?): ByteArray {
