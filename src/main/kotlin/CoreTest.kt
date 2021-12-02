@@ -19,9 +19,9 @@ class CoreTest()  : Serializable {
         luaClosure = null
     }
 
-    suspend fun delay(){
-        println("start delay")
-        delay(1000)
+    suspend fun delay(msec: Long, msec2: Long){
+        println("start delay"..msec.toString())
+        delay(msec)
         println("end delay")
     }
 

@@ -1510,8 +1510,8 @@ abstract class LuaValue : Varargs() {
         return callmt().call(this)
     }
 
-    open suspend fun callSuspend(): LuaValue {
-        return callmt().callSuspend(this)
+    open suspend fun suspendableCall(): LuaValue {
+        return callmt().suspendableCall(this)
     }
 
     /** Call `this` with 1 argument, including metatag processing,
@@ -1545,8 +1545,8 @@ abstract class LuaValue : Varargs() {
         return callmt().call(this, arg)
     }
 
-    open suspend fun callSuspend(arg: LuaValue): LuaValue {
-        return callmt().callSuspend(this, arg)
+    open suspend fun suspendableCall(arg: LuaValue): LuaValue {
+        return callmt().suspendableCall(this, arg)
     }
 
     /** Convenience function which calls a luavalue with a single, string argument.
@@ -1590,8 +1590,8 @@ abstract class LuaValue : Varargs() {
         return callmt().call(this, arg1, arg2)
     }
 
-    open suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue): LuaValue {
-        return callmt().callSuspend(this, arg1, arg2)
+    open suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return callmt().suspendableCall(this, arg1, arg2)
     }
 
     /** Call `this` with 3 arguments, including metatag processing,
@@ -1627,7 +1627,7 @@ abstract class LuaValue : Varargs() {
         return callmt().invoke(arrayOf(this, arg1, arg2, arg3)).arg1()
     }
 
-    open suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+    open suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return callmt().invoke(arrayOf(this, arg1, arg2, arg3)).arg1()
     }
 

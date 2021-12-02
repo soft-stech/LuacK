@@ -160,7 +160,7 @@ class LuaClosure
         return execute(stack, LuaValue.NONE).arg1()
     }
 
-    override suspend fun callSuspend(): LuaValue {
+    override suspend fun suspendableCall(): LuaValue {
         val stack = restoreOrCreateStack()
 
         if (executionStack!!.userEndCall) {
@@ -168,7 +168,7 @@ class LuaClosure
         }
 
         for (i in 0 until p.numparams) stack.set(i, LuaValue.NIL)
-        return executeSuspend(stack, LuaValue.NONE).arg1()
+        return suspendableExecute(stack, LuaValue.NONE).arg1()
     }
 
     override fun call(arg: LuaValue): LuaValue {
@@ -184,15 +184,15 @@ class LuaClosure
         }
     }
 
-    override suspend fun callSuspend(arg: LuaValue): LuaValue {
+    override suspend fun suspendableCall(arg: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
         System.arraycopy(LuaValue.NILS, 0, stack, 0, p.maxstacksize)
         for (i in 1 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
-            0 -> return executeSuspend(stack, arg).arg1()
+            0 -> return suspendableExecute(stack, arg).arg1()
             else -> {
                 stack[0] = arg
-                return executeSuspend(stack, LuaValue.NONE).arg1()
+                return suspendableExecute(stack, LuaValue.NONE).arg1()
             }
         }
     }
@@ -214,19 +214,19 @@ class LuaClosure
         }
     }
 
-    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue): LuaValue {
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
         for (i in 2 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
             1 -> {
                 stack[0] = arg1
-                return executeSuspend(stack, arg2).arg1()
+                return suspendableExecute(stack, arg2).arg1()
             }
-            0 -> return executeSuspend(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2) else LuaValue.NONE).arg1()
+            0 -> return suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2) else LuaValue.NONE).arg1()
             else -> {
                 stack[0] = arg1
                 stack[1] = arg2
-                return executeSuspend(stack, LuaValue.NONE).arg1()
+                return suspendableExecute(stack, LuaValue.NONE).arg1()
             }
         }
     }
@@ -254,25 +254,25 @@ class LuaClosure
         }
     }
 
-    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
         for (i in 3 until p.numparams) stack[i] = LuaValue.NIL
         return when (p.numparams) {
-            0 -> executeSuspend(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2, arg3) else LuaValue.NONE).arg1()
+            0 -> suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2, arg3) else LuaValue.NONE).arg1()
             1 -> {
                 stack[0] = arg1
-                executeSuspend(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg2, arg3) else LuaValue.NONE).arg1()
+                suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg2, arg3) else LuaValue.NONE).arg1()
             }
             2 -> {
                 stack[0] = arg1
                 stack[1] = arg2
-                executeSuspend(stack, arg3).arg1()
+                suspendableExecute(stack, arg3).arg1()
             }
             else -> {
                 stack[0] = arg1
                 stack[1] = arg2
                 stack[2] = arg3
-                executeSuspend(stack, LuaValue.NONE).arg1()
+                suspendableExecute(stack, LuaValue.NONE).arg1()
             }
         }
     }
@@ -291,7 +291,7 @@ class LuaClosure
     override suspend fun onInvokeSuspend(varargs: Varargs): Varargs {
         val stack = restoreOrCreateStack()
         for (i in 0 until p.numparams) stack[i] = varargs.arg(i + 1)
-        return executeSuspend(stack, if (p.is_vararg != 0) varargs.subargs(p.numparams + 1) else LuaValue.NONE)
+        return suspendableExecute(stack, if (p.is_vararg != 0) varargs.subargs(p.numparams + 1) else LuaValue.NONE)
     }
 
    fun stop(){
@@ -299,7 +299,7 @@ class LuaClosure
            item.pc = item.code.size-2
     }
 
-    protected suspend fun executeSuspend(stack: Array<LuaValue>, varargs: Varargs): Varargs {
+    protected suspend fun suspendableExecute(stack: Array<LuaValue>, varargs: Varargs): Varargs {
         val field: SerializableLuaClosureStack = executionStack!!.getClosureStacks().get(executionStack!!.getCurrentLevel())
 
         // upvalues are only possible when closures create closures
@@ -584,7 +584,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else{
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a].callSuspend()
+                                    stack[field.a].suspendableCall()
                                 }
 
 
@@ -597,7 +597,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else{
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a].callSuspend(stack[field.a + 1])
+                                    stack[field.a].suspendableCall(stack[field.a + 1])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -609,7 +609,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else{
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a].callSuspend(stack[field.a + 1], stack[field.a + 2])
+                                    stack[field.a].suspendableCall(stack[field.a + 1], stack[field.a + 2])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -621,7 +621,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else {
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a].callSuspend(stack[field.a + 1], stack[field.a + 2], stack[field.a + 3])
+                                    stack[field.a].suspendableCall(stack[field.a + 1], stack[field.a + 2], stack[field.a + 3])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -633,7 +633,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else {
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a] = stack[field.a].callSuspend()
+                                    stack[field.a] = stack[field.a].suspendableCall()
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -646,7 +646,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else {
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a] = stack[field.a].callSuspend(stack[field.a + 1])
+                                    stack[field.a] = stack[field.a].suspendableCall(stack[field.a + 1])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -659,7 +659,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else {
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a] = stack[field.a].callSuspend(stack[field.a + 1], stack[field.a + 2])
+                                    stack[field.a] = stack[field.a].suspendableCall(stack[field.a + 1], stack[field.a + 2])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)
@@ -672,7 +672,7 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else {
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    stack[field.a] = stack[field.a].callSuspend(stack[field.a + 1], stack[field.a + 2], stack[field.a + 3])
+                                    stack[field.a] = stack[field.a].suspendableCall(stack[field.a + 1], stack[field.a + 2], stack[field.a + 3])
                                 }
 
                                 executionStack!!.setCurrentLevel(executionStack!!.getCurrentLevel() - 1)

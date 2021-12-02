@@ -73,7 +73,7 @@ suspend fun main()= coroutineScope{
 suspend fun executeOldProcedureFromExecutionContext(){
     luaClosure = deserializeExecutionContext(File("filename1.txt").readBytes())
     luaClosure!!.setReturnValue("teeeeeeeeeest")
-    luaClosure!!.callSuspend()
+    luaClosure!!.suspendableCall()
 }
 
 suspend fun executeNewProcedure(){
@@ -81,7 +81,7 @@ suspend fun executeNewProcedure(){
     luaClosure = globals.load(script, "script") as LuaClosure
     val test = CoerceJavaToLua.coerce(CoreTest())
     globals["obj"] = test
-    luaClosure?.callSuspend()
+    luaClosure?.suspendableCall()
 }
 
 fun deserializeExecutionContext(executionContext: ByteArray): LuaClosure {

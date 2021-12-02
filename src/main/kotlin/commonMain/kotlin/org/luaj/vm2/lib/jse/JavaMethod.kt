@@ -67,24 +67,24 @@ internal class JavaMethod :
         return invokeMethod(arg.checkuserdata(), LuaValue.NONE)
     }
 
-    override suspend fun callSuspend(arg: LuaValue): LuaValue {
-        return invokeMethod1(arg.checkuserdata(), LuaValue.NONE)
+    override suspend fun suspendableCall(arg: LuaValue): LuaValue {
+        return invokeSuspendableMethod(arg.checkuserdata(), LuaValue.NONE)
     }
 
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
         return invokeMethod(arg1.checkuserdata(), arg2)
     }
 
-    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue): LuaValue {
-        return invokeMethod1(arg1.checkuserdata(), arg2)
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return invokeSuspendableMethod(arg1.checkuserdata(), arg2)
     }
 
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return invokeMethod(arg1.checkuserdata(), LuaValue.varargsOf(arg2, arg3))
     }
 
-    override suspend fun callSuspend(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
-        return invokeMethod(arg1.checkuserdata(), LuaValue.varargsOf(arg2, arg3))
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+        return invokeSuspendableMethod(arg1.checkuserdata(), LuaValue.varargsOf(arg2, arg3))
     }
 
     override fun invoke(args: Varargs): Varargs {
@@ -103,7 +103,7 @@ internal class JavaMethod :
 
     }
 
-    suspend fun invokeMethod1(instance: Any?, args: Varargs): LuaValue {
+    suspend fun invokeSuspendableMethod(instance: Any?, args: Varargs): LuaValue {
         val a = convertArgs(args)
         try {
             var m = instance!!::class.members.single{it.name == fullName}

@@ -189,7 +189,7 @@ protected constructor() : LuaFunction() {
         return call()
     }
 
-    override suspend fun callSuspend(a: LuaValue): LuaValue {
+    override suspend fun suspendableCall(a: LuaValue): LuaValue {
         return call()
     }
 
