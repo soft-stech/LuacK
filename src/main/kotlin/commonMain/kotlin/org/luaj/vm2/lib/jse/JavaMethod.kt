@@ -91,6 +91,10 @@ internal class JavaMethod :
         return invokeMethod(args.checkuserdata(1), args.subargs(2))
     }
 
+    override suspend fun invokeSuspend(args: Varargs): Varargs {
+        return invokeSuspendableMethod(args.checkuserdata(1), args.subargs(2))
+    }
+
     fun invokeMethod(instance: Any?, args: Varargs): LuaValue {
         val a = convertArgs(args)
         try {
@@ -107,7 +111,8 @@ internal class JavaMethod :
         val a = convertArgs(args)
         try {
             var m = instance!!::class.members.single{it.name == fullName}
-            return CoerceJavaToLua.coerce(m.callSuspend(instance))
+            a[0] = instance
+            return CoerceJavaToLua.coerce(m.callSuspend(*a))
         } catch (e: InvocationTargetException) {
             throw LuaError(e.targetException)
         } catch (e: Exception) {

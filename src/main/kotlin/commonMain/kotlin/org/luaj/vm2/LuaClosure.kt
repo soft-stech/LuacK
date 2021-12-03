@@ -687,13 +687,13 @@ class LuaClosure
                                     executionStack!!.setJavaLevel(Int.MAX_VALUE)
                                 } else{
                                     if(stack[field.a] is LuaClosure) (stack[field.a] as LuaClosure).executionStack = executionStack
-                                    field.v = stack[field.a].invokeSuspend(
-                                        if (field.b > 0)
-                                            LuaValue.varargsOf(stack, field.a + 1, field.b - 1)
-                                        else
-                                        // exact arg count
-                                            LuaValue.varargsOf(stack, field.a + 1, field.top - field.v.narg() - (field.a + 1), field.v)
-                                    )  // from prev top
+
+                                    var c = if (field.b > 0)
+                                        LuaValue.varargsOf(stack, field.a + 1, field.b - 1)
+                                    else
+                                        LuaValue.varargsOf(stack, field.a + 1, field.top - field.v.narg() - (field.a + 1), field.v)
+
+                                    field.v = stack[field.a].invokeSuspend(c)  // from prev top
                                 }
                                 if (field.c > 0) {
                                     field.v.copyto(stack, field.a, field.c - 1)

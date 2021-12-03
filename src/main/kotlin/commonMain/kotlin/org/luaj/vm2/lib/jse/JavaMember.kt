@@ -65,7 +65,9 @@ internal abstract class JavaMember protected constructor(params: Array<Class<*>>
 
     protected fun convertArgs(args: Varargs): Array<Any> {
         val a: Array<Any?> = if (varargs == null) {
-            Array(fixedargs.size) { fixedargs[it].coerce(args.arg(it + 1)) }
+            Array(fixedargs.size) {
+                fixedargs[it].coerce(args.arg(it))
+            }
         } else {
             val n = max(fixedargs.size, args.narg())
             arrayOfNulls<Any>(n).also { a ->

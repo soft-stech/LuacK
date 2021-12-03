@@ -13,6 +13,7 @@ class MainT {
 var script =
     "function test(a1,b1,c1,d1,e1)\n" +
     "	print(a1..b1..c1..d1..e1)\n"+
+    "   obj:delay(5200, 5300, 5400, 5500, 5600, 5700, 5800)\n"+
     "   local a=obj:TestTest()\n"+
     "	print(a)\n"+
     "   print(\"end of test\")\n"+
@@ -20,7 +21,7 @@ var script =
     "function test2(a1,b1,c1,d1)\n"+
     "	print(a1..b1..c1..d1)\n"+
     "   test(1,2,3,4,5)\n"+
-    "   local a3=obj:TestTest(1)\n"+
+    "   local a3=obj:TestTest()\n"+
     "	print(a3)\n"+
     "   print(\"end of test2\")\n"+
     "end\n"+
@@ -34,15 +35,17 @@ var script =
     "function test4(a1, b1)\n"+
     "	print(a1..b1)\n"+
     "   local a=obj:TestTest()\n"+
+    "   obj:delay(5200, 5300, 5400, 5500, 5600, 5700, 5800)\n"+
     "	print(a)\n"+
     "   test3(1,2,3)\n"+
     "   local a2=obj:TestTest()\n"+
     "	print(a2)\n"+
     "   print(\"end of test4\")\n"+
     "end\n"+
-    "test4(1, 2)"+
-    "   local a2=obj:TestTest()\n"+
-    "	print(a2)\n"+
+    "obj:delay(5200, 5300, 5400, 5500, 5600, 5700, 5800)\n"+
+    "test4(1, 2)\n"+
+    "local a2=obj:TestTest()\n"+
+    "print(a2)\n"+
 "   print(\"end of script\")\n"
 
 var script2 =
