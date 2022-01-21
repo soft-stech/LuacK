@@ -90,6 +90,10 @@ class CoroutineLib : TwoArgFunction() {
         return coroutine
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     internal inner class create : LibFunction() {
         override fun call(f: LuaValue): LuaValue {
             return LuaThread(globals!!, f.checkfunction())
@@ -101,12 +105,20 @@ class CoroutineLib : TwoArgFunction() {
             val t = args.checkthread(1)
             return t!!.resume(args.subargs(2))
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     internal inner class running : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             val r = globals!!.running
             return LuaValue.varargsOf(r!!, LuaValue.valueOf(r.isMainThread))
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -120,6 +132,10 @@ class CoroutineLib : TwoArgFunction() {
     internal inner class yield : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return globals!!.yield(args)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -139,6 +155,10 @@ class CoroutineLib : TwoArgFunction() {
             } else {
                 LuaValue.error(result.arg(2).tojstring())
             }
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

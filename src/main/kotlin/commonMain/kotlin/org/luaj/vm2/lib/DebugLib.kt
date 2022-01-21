@@ -103,6 +103,10 @@ class DebugLib : TwoArgFunction() {
         return debug
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     // debug.debug()
     internal class Debug : ZeroArgFunction() {
         override fun call(): LuaValue {
@@ -120,6 +124,10 @@ class DebugLib : TwoArgFunction() {
                 LuaValue.valueOf((if (s.hookcall) "c" else "") + (if (s.hookline) "l" else "") + if (s.hookrtrn) "r" else ""),
                 LuaValue.valueOf(s.hookcount)
             )
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -187,6 +195,10 @@ class DebugLib : TwoArgFunction() {
             }
             return info
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     //	debug.getlocal ([thread,] f, local)
@@ -198,6 +210,10 @@ class DebugLib : TwoArgFunction() {
             val local = args.checkint(a++)
             val f = callstack(thread!!).getCallFrame(level)
             return f?.getLocal(local) ?: LuaValue.NONE
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -229,6 +245,10 @@ class DebugLib : TwoArgFunction() {
                 }
             }
             return LuaValue.NIL
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -265,6 +285,10 @@ class DebugLib : TwoArgFunction() {
             s.hookrtrn = rtrn
             return LuaValue.NONE
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     //	debug.setlocal ([thread,] level, local, value)
@@ -277,6 +301,10 @@ class DebugLib : TwoArgFunction() {
             val value = args.arg(a++)
             val f = callstack(thread!!).getCallFrame(level)
             return f?.setLocal(local, value) ?: LuaValue.NONE
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -313,6 +341,10 @@ class DebugLib : TwoArgFunction() {
             }
             return LuaValue.NIL
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     //	debug.setuservalue (udata, value)
@@ -325,6 +357,10 @@ class DebugLib : TwoArgFunction() {
             u.m_metatable = v.getmetatable()
             return LuaValue.NONE
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     //	debug.traceback ([thread,] [message [, level]])
@@ -336,6 +372,10 @@ class DebugLib : TwoArgFunction() {
             val level = args.optint(a++, 1)
             val tb = callstack(thread!!).traceback(level)
             return LuaValue.valueOf(if (message != null) message + "\n" + tb else tb)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -352,6 +392,10 @@ class DebugLib : TwoArgFunction() {
             }
             return LuaValue.NIL
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     //	debug.upvaluejoin (f1, n1, f2, n2)
@@ -367,6 +411,10 @@ class DebugLib : TwoArgFunction() {
                 argerror("index out of range")
             f1.upValues[n1 - 1] = f2.upValues[n2 - 1]
             return LuaValue.NONE
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

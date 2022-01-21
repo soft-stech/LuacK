@@ -111,6 +111,10 @@ open class OsLib : TwoArgFunction() {
         return os
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     internal inner class OsLibFunc(opcode: Int, name: String) : VarArgFunction() {
         init {
             this.opcode = opcode
@@ -172,6 +176,10 @@ open class OsLib : TwoArgFunction() {
                 return LuaValue.varargsOf(LuaValue.NIL, LuaValue.valueOf(e.message!!))
             }
 
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

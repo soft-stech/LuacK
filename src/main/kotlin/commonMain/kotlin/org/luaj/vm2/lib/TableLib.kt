@@ -78,6 +78,10 @@ class TableLib : TwoArgFunction() {
         return LuaValue.NIL
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     internal open class TableLibFunction : LibFunction() {
         override fun call(): LuaValue {
             return LuaValue.argerror(1, "table expected, got no value")
@@ -92,6 +96,10 @@ class TableLib : TwoArgFunction() {
 
         override fun call(list: LuaValue, sep: LuaValue): LuaValue {
             return list.checktable()!!.concat(sep.checkstring()!!, 1, list.length())
+        }
+
+        override suspend fun suspendableCall(list: LuaValue, sep: LuaValue): LuaValue {
+            return call(list, sep)
         }
 
         override fun call(list: LuaValue, sep: LuaValue, i: LuaValue): LuaValue {
@@ -121,6 +129,10 @@ class TableLib : TwoArgFunction() {
                 }
             }
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "pack" (...) -> table
@@ -130,12 +142,20 @@ class TableLib : TwoArgFunction() {
             t.set("n", args.narg())
             return t
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "remove" (table [, pos]) -> removed-ele
     internal class remove : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return args.arg1().checktable()!!.remove(args.optint(2, 0))
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -146,6 +166,10 @@ class TableLib : TwoArgFunction() {
                 if (args.arg(2).isnil()) LuaValue.NIL else args.arg(2).checkfunction()!!
             )
             return LuaValue.NONE
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -159,6 +183,10 @@ class TableLib : TwoArgFunction() {
                 2 -> return t.unpack(args.checkint(2))
                 else -> return t.unpack(args.checkint(2), args.checkint(3))
             }
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 }

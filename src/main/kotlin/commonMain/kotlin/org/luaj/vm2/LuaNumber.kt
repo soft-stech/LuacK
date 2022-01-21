@@ -45,9 +45,13 @@ abstract class LuaNumber : LuaValue() {
     override fun isstring(): Boolean = true
     override fun getmetatable(): LuaValue? = s_metatable
     override fun concat(rhs: LuaValue): LuaValue = rhs.concatTo(this)
+    override suspend fun concatSuspend(rhs: LuaValue): LuaValue = rhs.concatToSuspend(this)
     override fun concat(rhs: Buffer): Buffer = rhs.concatTo(this)
+    override suspend fun concatSuspend(rhs: Buffer): Buffer = rhs.concatToSuspend(this)
     override fun concatTo(lhs: LuaNumber): LuaValue = strvalue()!!.concatTo(lhs.strvalue()!!)
+    override suspend fun concatToSuspend(lhs: LuaNumber): LuaValue = strvalue()!!.concatToSuspend(lhs.strvalue()!!)
     override fun concatTo(lhs: LuaString): LuaValue = strvalue()!!.concatTo(lhs)
+    override suspend fun concatToSuspend(lhs: LuaString): LuaValue = strvalue()!!.concatToSuspend(lhs)
 
     companion object {
         /** Shared static metatable for all number values represented in lua.  */

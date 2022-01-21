@@ -126,6 +126,10 @@ class PackageLib : TwoArgFunction() {
         return env
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     /** Allow packages to mark themselves as loaded  */
     fun setIsLoaded(name: String, value: LuaTable) {
         package_!![_LOADED][name] = value
@@ -222,6 +226,10 @@ class PackageLib : TwoArgFunction() {
                 valueOf("absent")
             )
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     inner class Preload_searcher : VarArgFunction() {
@@ -232,6 +240,10 @@ class PackageLib : TwoArgFunction() {
                 valueOf("\n\tno field package.preload['$name']")
             else
                 `val`
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -260,6 +272,10 @@ class PackageLib : TwoArgFunction() {
             )
 
             // report error
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -309,6 +325,10 @@ class PackageLib : TwoArgFunction() {
             }
             return varargsOf(NIL, valueOf(sb!!.toString()))
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     inner class Java_searcher : VarArgFunction() {
@@ -323,6 +343,10 @@ class PackageLib : TwoArgFunction() {
             } catch (e: Exception) {
                 return valueOf("\n\tjava load failed on '$classname', $e")
             }
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

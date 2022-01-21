@@ -92,6 +92,10 @@ class JseBaseLib : BaseLib() {
         return env
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
 
     /**
      * Try to open a file in the current working directory,

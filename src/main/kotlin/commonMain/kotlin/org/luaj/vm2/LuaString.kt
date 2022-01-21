@@ -174,13 +174,19 @@ private constructor(
 
     // concatenation
     override fun concat(rhs: LuaValue): LuaValue = rhs.concatTo(this)
+    override suspend fun concatSuspend(rhs: LuaValue): LuaValue = rhs.concatToSuspend(this)
     override fun concat(rhs: Buffer): Buffer = rhs.concatTo(this)
+    override suspend fun concatSuspend(rhs: Buffer): Buffer = rhs.concatToSuspend(this)
     override fun concatTo(lhs: LuaNumber): LuaValue = concatTo(lhs.strvalue()!!)
+    override suspend fun concatToSuspend(lhs: LuaNumber): LuaValue = concatToSuspend(lhs.strvalue()!!)
     override fun concatTo(lhs: LuaString): LuaValue {
         val b = ByteArray(lhs.m_length + this.m_length)
         System.arraycopy(lhs.m_bytes, lhs.m_offset, b, 0, lhs.m_length)
         System.arraycopy(this.m_bytes, this.m_offset, b, lhs.m_length, this.m_length)
         return valueUsing(b, 0, b.size)
+    }
+    override suspend fun concatToSuspend(lhs: LuaString): LuaValue {
+        return concatTo(lhs)
     }
 
     // string comparison

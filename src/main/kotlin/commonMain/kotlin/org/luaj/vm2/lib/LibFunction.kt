@@ -197,6 +197,10 @@ protected constructor() : LuaFunction() {
         return call(a)
     }
 
+    override suspend fun suspendableCall(a: LuaValue, b: LuaValue): LuaValue {
+        return call(a, b)
+    }
+
     override fun call(a: LuaValue, b: LuaValue, c: LuaValue): LuaValue {
         return call(a, b)
     }
@@ -213,6 +217,10 @@ protected constructor() : LuaFunction() {
             3 -> return call(args.arg1(), args.arg(2), args.arg(3))
             else -> return call(args.arg1(), args.arg(2), args.arg(3), args.arg(4))
         }
+    }
+
+    override suspend fun invokeSuspend(args: Varargs): Varargs{
+        return invoke(args)
     }
 
     companion object {

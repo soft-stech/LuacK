@@ -70,8 +70,16 @@ abstract class ThreeArgFunction : LibFunction() {
         return call(arg1, arg2, LuaValue.NIL)
     }
 
-    override fun invoke(varargs: Varargs): Varargs {
-        return call(varargs.arg1(), varargs.arg(2), varargs.arg(3))
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return call(arg1, arg2)
+    }
+
+    override fun invoke(args: Varargs): Varargs {
+        return call(args.arg1(), args.arg(2), args.arg(3))
+    }
+
+    override suspend fun invokeSuspend(args: Varargs): Varargs{
+        return invoke(args)
     }
 
 } 

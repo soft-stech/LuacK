@@ -71,6 +71,8 @@ abstract class Varargs : Serializable {
      */
     abstract fun arg(i: Int): LuaValue
 
+    abstract suspend fun argSuspend(i: Int): LuaValue
+
     /**
      * Get the number of arguments, or 0 if there are none.
      * @return number of arguments.
@@ -85,13 +87,15 @@ abstract class Varargs : Serializable {
      */
     abstract fun arg1(): LuaValue
 
+    abstract suspend fun arg1Suspend(): LuaValue
+
     /**
      * Evaluate any pending tail call and return result.
      * @return the evaluated tail call result
      */
     open fun eval(): Varargs = this
 
-    open suspend fun eval1(): Varargs = this
+    open suspend fun evalSuspend(): Varargs = this
 
     // -----------------------------------------------------------------------
     // utilities to get specific arguments and type-check them.
@@ -542,7 +546,15 @@ abstract class Varargs : Serializable {
             return if (i >= start && i <= end) v.arg(i) else LuaValue.NIL
         }
 
+        override suspend fun argSuspend(i: Int): LuaValue {
+            var i = i
+            i += start - 1
+            return if (i >= start && i <= end) v.argSuspend(i) else LuaValue.NIL
+        }
+
         override fun arg1(): LuaValue = v.arg(start)
+
+        override suspend fun arg1Suspend(): LuaValue = v.arg(start)
 
         override fun narg(): Int = end + 1 - start
 
@@ -579,8 +591,10 @@ abstract class Varargs : Serializable {
      */
     internal class PairVarargs(private val v1: LuaValue, private val v2: Varargs) : Varargs() {
         override fun arg(i: Int): LuaValue = if (i == 1) v1 else v2.arg(i - 1)
+        override suspend fun argSuspend(i: Int): LuaValue = if (i == 1) v1 else v2.argSuspend(i - 1)
         override fun narg(): Int = 1 + v2.narg()
         override fun arg1(): LuaValue = v1
+        override suspend fun arg1Suspend(): LuaValue = arg1()
 
         override fun subargs(start: Int): Varargs = when (start) {
             1 -> this
@@ -609,8 +623,10 @@ abstract class Varargs : Serializable {
      */
     class ArrayVarargs(private val v: Array<LuaValue>, private val r: Varargs) : Varargs() {
         override fun arg(i: Int): LuaValue = if (i < 1) LuaValue.NIL else if (i <= v.size) v[i - 1] else r.arg(i - v.size)
+        override suspend fun argSuspend(i: Int): LuaValue = if (i < 1) LuaValue.NIL else if (i <= v.size) v[i - 1] else r.argSuspend(i - v.size)
         override fun narg(): Int = v.size + r.narg()
         override fun arg1(): LuaValue = if (v.size > 0) v[0] else r.arg1()
+        override suspend fun arg1Suspend(): LuaValue = if (v.size > 0) v[0] else r.arg1Suspend()
 
         override fun subargs(start: Int): Varargs = when {
             start <= 0 -> LuaValue.argerror(1, "start must be > 0")
@@ -676,8 +692,10 @@ abstract class Varargs : Serializable {
         }
 
         override fun arg(i: Int): LuaValue = if (i < 1) LuaValue.NIL else if (i <= length) v[offset + i - 1] else more.arg(i - length)
+        override suspend fun argSuspend(i: Int): LuaValue = if (i < 1) LuaValue.NIL else if (i <= length) v[offset + i - 1] else more.argSuspend(i - length)
         override fun narg(): Int = length + more.narg()
         override fun arg1(): LuaValue = if (length > 0) v[offset] else more.arg1()
+        override suspend fun arg1Suspend(): LuaValue = if (length > 0) v[offset] else more.arg1Suspend()
 
         override fun subargs(start: Int): Varargs = when {
             start <= 0 -> LuaValue.argerror(1, "start must be > 0")

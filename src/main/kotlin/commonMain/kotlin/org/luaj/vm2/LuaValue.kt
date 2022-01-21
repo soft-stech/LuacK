@@ -1428,12 +1428,20 @@ abstract class LuaValue : Varargs() {
         return if (index == 1) this else NIL
     }
 
+    override suspend fun argSuspend(i: Int): LuaValue {
+        return arg(i)
+    }
+
     override fun narg(): Int {
         return 1
     }
 
     override fun arg1(): LuaValue {
         return this
+    }
+
+    override suspend fun arg1Suspend(): LuaValue {
+        return arg1()
     }
 
     /**
@@ -3433,6 +3441,10 @@ abstract class LuaValue : Varargs() {
         return this.concatmt(rhs)
     }
 
+    open suspend fun concatSuspend(rhs: LuaValue): LuaValue {
+        return this.concatmtSuspend(rhs)
+    }
+
     /** Reverse-concatenation: concatenate this value onto another value
      * whose type is unknwon
      * and return the result using rules of lua string concatenation including
@@ -3471,6 +3483,10 @@ abstract class LuaValue : Varargs() {
         return lhs.concatmt(this)
     }
 
+    open suspend fun concatToSuspend(lhs: LuaNumber): LuaValue {
+        return lhs.concatmtSuspend(this)
+    }
+
     /** Reverse-concatenation: concatenate this value onto another value
      * known to be a [LuaString]
      * and return the result using rules of lua string concatenation including
@@ -3488,6 +3504,10 @@ abstract class LuaValue : Varargs() {
      */
     open fun concatTo(lhs: LuaString): LuaValue {
         return lhs.concatmt(this)
+    }
+
+    open suspend fun concatToSuspend(lhs: LuaString): LuaValue {
+        return lhs.concatmtSuspend(this)
     }
 
     /** Convert the value to a [Buffer] for more efficient concatenation of
@@ -3514,6 +3534,10 @@ abstract class LuaValue : Varargs() {
         return rhs.concatTo(this)
     }
 
+    open suspend fun concatSuspend(rhs: Buffer): Buffer {
+        return rhs.concatToSuspend(this)
+    }
+
     /** Perform metatag processing for concatenation operations.
      *
      *
@@ -3528,6 +3552,13 @@ abstract class LuaValue : Varargs() {
         if (h.isnil() && (run { h = rhs.metatag(CONCAT); h }).isnil())
             error("attempt to concatenate " + typename() + " and " + rhs.typename())
         return h.call(this, rhs)
+    }
+
+    suspend fun concatmtSuspend(rhs: LuaValue): LuaValue {
+        var h = metatag(CONCAT)
+        if (h.isnil() && (run { h = rhs.metatag(CONCAT); h }).isnil())
+            error("attempt to concatenate " + typename() + " and " + rhs.typename())
+        return h.suspendableCall(this, rhs)
     }
 
     /** Perform boolean `and` with another operand, based on lua rules for boolean evaluation.
@@ -3658,12 +3689,20 @@ abstract class LuaValue : Varargs() {
             return NIL
         }
 
+        override suspend fun argSuspend(i: Int): LuaValue {
+            return arg(i)
+        }
+
         override fun narg(): Int {
             return 0
         }
 
         override fun arg1(): LuaValue {
             return NIL
+        }
+
+        override suspend fun arg1Suspend(): LuaValue {
+            return arg1()
         }
 
         override fun tojstring(): String {

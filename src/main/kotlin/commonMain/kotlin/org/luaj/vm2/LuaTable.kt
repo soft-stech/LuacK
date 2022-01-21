@@ -79,7 +79,7 @@ import kotlin.math.*
 open class LuaTable : LuaValue, Metatable {
 
     /** the array values  */
-    protected var array: Array<LuaValue?> = LuaValue.NOVALS
+    public var array: Array<LuaValue?> = LuaValue.NOVALS
 
     /** the hash part  */
     protected var hash: Array<Slot?> = NOBUCKETS
@@ -1024,6 +1024,11 @@ open class LuaTable : LuaValue, Metatable {
             return LuaValue.NIL
         }
 
+
+        override suspend fun argSuspend(i: Int): LuaValue {
+            return arg(i)
+        }
+
         override fun narg(): Int {
             return 2
         }
@@ -1037,6 +1042,10 @@ open class LuaTable : LuaValue, Metatable {
 
         override fun arg1(): LuaValue {
             return key()
+        }
+
+        override suspend fun arg1Suspend(): LuaValue {
+            return arg1()
         }
 
         override fun subargs(start: Int): Varargs {

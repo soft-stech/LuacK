@@ -176,12 +176,20 @@ class Buffer {
         return setvalue(lhs.concat(value()))
     }
 
+    suspend fun concatToSuspend(lhs: LuaValue): Buffer {
+        return setvalue(lhs.concatSuspend(value()))
+    }
+
     /** Concatenate this buffer onto a [LuaString]
      * @param lhs the left-hand-side value onto which we are concatenating `this`
      * @return [Buffer] for use in call chaining.
      */
     fun concatTo(lhs: LuaString): Buffer {
         return if (value != null && !value!!.isstring()) setvalue(lhs.concat(value!!)) else prepend(lhs)
+    }
+
+    suspend fun concatToSuspend(lhs: LuaString): Buffer {
+        return if (value != null && !value!!.isstring()) setvalue(lhs.concatSuspend(value!!)) else prepend(lhs)
     }
 
     /** Concatenate this buffer onto a [LuaNumber]
@@ -193,6 +201,10 @@ class Buffer {
      */
     fun concatTo(lhs: LuaNumber): Buffer {
         return if (value != null && !value!!.isstring()) setvalue(lhs.concat(value!!)) else prepend(lhs.strvalue()!!)
+    }
+
+    suspend fun concatToSuspend(lhs: LuaNumber): Buffer {
+        return if (value != null && !value!!.isstring()) setvalue(lhs.concatSuspend(value!!)) else prepend(lhs.strvalue()!!)
     }
 
     /** Concatenate bytes from a [LuaString] onto the front of this buffer

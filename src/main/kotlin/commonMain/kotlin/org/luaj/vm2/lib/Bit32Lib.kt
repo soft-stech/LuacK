@@ -72,6 +72,10 @@ class Bit32Lib : TwoArgFunction() {
         return t
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     internal class Bit32LibV : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             when (opcode) {
@@ -87,6 +91,10 @@ class Bit32Lib : TwoArgFunction() {
                 )
             }
             return LuaValue.NIL
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

@@ -228,6 +228,10 @@ abstract class IoLib : TwoArgFunction() {
         return t
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     private fun setLibInstance(t: LuaTable) {
         val k = t.keys()
         var i = 0
@@ -281,6 +285,10 @@ abstract class IoLib : TwoArgFunction() {
             }
 
             return LuaValue.NONE
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

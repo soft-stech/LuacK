@@ -121,7 +121,9 @@ class LuaClosure
     }
 
     fun setReturnValue(value: String){
-        executionStack!!.SetReturnValue(LuaValue.valueOf(value))
+        var text : String = ""
+        if(value != null) text = value
+        executionStack!!.setReturnValue(LuaValue.valueOf(text))
     }
 
     private fun getNewStack(): Array<LuaValue> {
@@ -141,7 +143,7 @@ class LuaClosure
         val stack: Array<LuaValue>
         val level: Int = executionStack?.getCurrentLevel() ?: 0
         val stackAlreadyExists: Boolean = level <= (executionStack!!.getClosureStacks().size ?: 0) - 1
-        if (stackAlreadyExists && !executionStack!!.userEndCall) {
+        if (stackAlreadyExists && !executionStack!!.getUserEndCall()) {
             stack = executionStack!!.getClosureStacks().get(executionStack!!.getCurrentLevel()).stack
         } else {
             stack = getNewStack()
@@ -152,7 +154,7 @@ class LuaClosure
     override fun call(): LuaValue {
         val stack = restoreOrCreateStack()
 
-        if (executionStack!!.userEndCall) {
+        if (executionStack!!.getUserEndCall()) {
             executionStack!!.setCurrentLevel(executionStack!!.getClosureStacks().size - 1)
         }
 
@@ -163,18 +165,16 @@ class LuaClosure
     override suspend fun suspendableCall(): LuaValue {
         val stack = restoreOrCreateStack()
 
-        if (executionStack!!.userEndCall) {
+        if (executionStack!!.getUserEndCall()) {
             executionStack!!.setCurrentLevel(executionStack!!.getClosureStacks().size - 1)
         }
 
         for (i in 0 until p.numparams) stack.set(i, LuaValue.NIL)
-        return suspendableExecute(stack, LuaValue.NONE).arg1()
+        return suspendableExecute(stack, LuaValue.NONE).arg1Suspend()
     }
 
     override fun call(arg: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        System.arraycopy(LuaValue.NILS, 0, stack, 0, p.maxstacksize)
-        for (i in 1 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
             0 -> return execute(stack, arg).arg1()
             else -> {
@@ -186,20 +186,17 @@ class LuaClosure
 
     override suspend fun suspendableCall(arg: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        System.arraycopy(LuaValue.NILS, 0, stack, 0, p.maxstacksize)
-        for (i in 1 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
-            0 -> return suspendableExecute(stack, arg).arg1()
+            0 -> return suspendableExecute(stack, arg).arg1Suspend()
             else -> {
                 stack[0] = arg
-                return suspendableExecute(stack, LuaValue.NONE).arg1()
+                return suspendableExecute(stack, LuaValue.NONE).arg1Suspend()
             }
         }
     }
 
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        for (i in 2 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
             1 -> {
                 stack[0] = arg1
@@ -216,24 +213,22 @@ class LuaClosure
 
     override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        for (i in 2 until p.numparams) stack[i] = LuaValue.NIL
         when (p.numparams) {
             1 -> {
                 stack[0] = arg1
-                return suspendableExecute(stack, arg2).arg1()
+                return suspendableExecute(stack, arg2).arg1Suspend()
             }
-            0 -> return suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2) else LuaValue.NONE).arg1()
+            0 -> return suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2) else LuaValue.NONE).arg1Suspend()
             else -> {
                 stack[0] = arg1
                 stack[1] = arg2
-                return suspendableExecute(stack, LuaValue.NONE).arg1()
+                return suspendableExecute(stack, LuaValue.NONE).arg1Suspend()
             }
         }
     }
 
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        for (i in 3 until p.numparams) stack[i] = LuaValue.NIL
         return when (p.numparams) {
             0 -> execute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2, arg3) else LuaValue.NONE).arg1()
             1 -> {
@@ -256,23 +251,22 @@ class LuaClosure
 
     override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         val stack = restoreOrCreateStack()
-        for (i in 3 until p.numparams) stack[i] = LuaValue.NIL
         return when (p.numparams) {
-            0 -> suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2, arg3) else LuaValue.NONE).arg1()
+            0 -> suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg1, arg2, arg3) else LuaValue.NONE).arg1Suspend()
             1 -> {
                 stack[0] = arg1
-                suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg2, arg3) else LuaValue.NONE).arg1()
+                suspendableExecute(stack, if (p.is_vararg != 0) LuaValue.varargsOf(arg2, arg3) else LuaValue.NONE).arg1Suspend()
             }
             2 -> {
                 stack[0] = arg1
                 stack[1] = arg2
-                suspendableExecute(stack, arg3).arg1()
+                suspendableExecute(stack, arg3).arg1Suspend()
             }
             else -> {
                 stack[0] = arg1
                 stack[1] = arg2
                 stack[2] = arg3
-                suspendableExecute(stack, LuaValue.NONE).arg1()
+                suspendableExecute(stack, LuaValue.NONE).arg1Suspend()
             }
         }
     }
@@ -294,8 +288,9 @@ class LuaClosure
         return suspendableExecute(stack, if (p.is_vararg != 0) varargs.subargs(p.numparams + 1) else LuaValue.NONE)
     }
 
-   fun stop(){
-       for (item in executionStack!!.getClosureStacks())
+    fun stop(){
+        executionStack!!.setEndOfScript(false)
+        for (item in executionStack!!.getClosureStacks())
            item.pc = item.code.size-2
     }
 
@@ -476,10 +471,10 @@ class LuaClosure
                             if (field.c > field.b + 1) {
                                 var sb = stack[field.c].buffer()
                                 while (--field.c >= field.b)
-                                    sb = stack[field.c].concat(sb)
+                                    sb = stack[field.c].concatSuspend(sb)
                                 stack[field.a] = sb.value()
                             } else {
-                                stack[field.a] = stack[field.c - 1].concat(stack[field.c])
+                                stack[field.a] = stack[field.c - 1].concatSuspend(stack[field.c])
                             }
                         }
                         ++field.pc
@@ -693,7 +688,10 @@ class LuaClosure
                                     else
                                         LuaValue.varargsOf(stack, field.a + 1, field.top - field.v.narg() - (field.a + 1), field.v)
 
-                                    field.v = stack[field.a].invokeSuspend(c)  // from prev top
+                                    if(stack[field.a].isnil())
+                                        field.v = stack[field.a].invoke(c)  // from prev top
+                                    else
+                                        field.v = stack[field.a].invokeSuspend(c)
                                 }
                                 if (field.c > 0) {
                                     field.v.copyto(stack, field.a, field.c - 1)

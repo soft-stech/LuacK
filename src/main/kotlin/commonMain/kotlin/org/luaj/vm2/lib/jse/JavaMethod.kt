@@ -108,10 +108,20 @@ internal class JavaMethod :
     }
 
     suspend fun invokeSuspendableMethod(instance: Any?, args: Varargs): LuaValue {
-        val a = convertArgs(args)
+        var a: Array<Any?>
+        if(args == LuaValue.NIL){
+            a = arrayOf(instance)
+        }else{
+            var ar = convertArgs(args)
+            a = Array<Any?>(ar.size){}
+            a[0] = instance
+            for (i in 0..a.size-2) {
+                a[i+1] = ar[i]
+            }
+        }
+
         try {
             var m = instance!!::class.members.single{it.name == fullName}
-            a[0] = instance
             return CoerceJavaToLua.coerce(m.callSuspend(*a))
         } catch (e: InvocationTargetException) {
             throw LuaError(e.targetException)
@@ -152,6 +162,10 @@ internal class JavaMethod :
 
         override fun invoke(args: Varargs): Varargs {
             return invokeBestMethod(args.checkuserdata(1), args.subargs(2))
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
 
         private fun invokeBestMethod(instance: Any?, args: Varargs): LuaValue {

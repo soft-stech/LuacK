@@ -80,14 +80,40 @@ class TailcallVarargs : Varargs {
         return result!!
     }
 
+    override suspend fun evalSuspend(): Varargs {
+        while (result == null) {
+            val r = func!!.onInvokeSuspend(args!!)
+            if (r.isTailcall()) {
+                val t = r as TailcallVarargs
+                func = t.func
+                args = t.args
+            } else {
+                result = r
+                func = null
+                args = null
+            }
+        }
+        return result!!
+    }
+
     override fun arg(i: Int): LuaValue {
         if (result == null) eval()
         return result!!.arg(i)
     }
 
+    override suspend fun argSuspend(i: Int): LuaValue {
+        if (result == null) evalSuspend()
+        return result!!.argSuspend(i)
+    }
+
     override fun arg1(): LuaValue {
         if (result == null) eval()
         return result!!.arg1()
+    }
+
+    override suspend fun arg1Suspend(): LuaValue {
+        if (result == null) evalSuspend()
+        return result!!.arg1Suspend()
     }
 
     override fun narg(): Int {

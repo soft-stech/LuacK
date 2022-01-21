@@ -119,6 +119,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
         return env
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     /** ResourceFinder implementation
      *
      * Tries to open the file as a resource, which can work for JSE and JME.
@@ -134,6 +138,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             if (!args.arg1().toboolean())
                 LuaValue.error(if (args.narg() > 1) args.optjstring(2, "assertion failed!")!! else "assertion failed!")
             return args
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -158,6 +166,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                 else -> this.argerror("gc op")
             }
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "dofile", // ( filename ) -> result1, ...
@@ -171,6 +183,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                 loadFile(args.checkjstring(1), "bt", globals)
             return if (v.isnil(1)) LuaValue.error(v.tojstring(2)) else v.arg1().invoke()
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "error", // ( message [,level] ) -> ERR
@@ -182,6 +198,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                 LuaError(arg1.tojstring(), arg2.optint(1))
             else
                 LuaError(arg1)
+        }
+
+        override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+            return call(arg1, arg2)
         }
     }
 
@@ -212,6 +232,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                     StringInputStream(ld.checkfunction()!!), source, mode, env
             )
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "loadfile", // ( [filename [, mode [, env]]] ) -> chunk | nil, msg
@@ -222,6 +246,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             val mode = args.optjstring(2, "bt")
             val env = args.optvalue(3, globals!!)
             return filename?.let { loadFile(it, mode, env) } ?: loadStream(globals!!.STDIN, "=stdin", mode, env)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -244,6 +272,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                     globals!!.debuglib!!.onReturn()
             }
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "print", // (...) -> void
@@ -261,6 +293,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             globals!!.STDOUT.println()
             return LuaValue.NONE
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
 
@@ -277,6 +313,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
         override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
             return LuaValue.valueOf(arg1.raweq(arg2))
         }
+
+        override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+            return call(arg1, arg2)
+        }
     }
 
     // "rawget", // (table, index) -> value
@@ -291,6 +331,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
 
         override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
             return arg1.checktable()!!.rawget(arg2)
+        }
+
+        override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+            return call(arg1, arg2)
         }
     }
 
@@ -312,6 +356,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             return LuaValue.argerror(3, "value")
         }
 
+        override suspend fun suspendableCall(table: LuaValue, index: LuaValue): LuaValue {
+            return call(table, index)
+        }
+
         override fun call(table: LuaValue, index: LuaValue, value: LuaValue): LuaValue {
             val t = table.checktable()
             t!!.rawset(index.checknotnil(), value)
@@ -330,6 +378,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                 LuaValue.argerror(1, "index out of range")
             return args.subargs(if (i < 0) n + i + 2 else i + 1)
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "setmetatable", // (table, metatable) -> table
@@ -343,6 +395,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             if (mt0 != null && !mt0.rawget(LuaValue.METATABLE).isnil())
                 LuaValue.error("cannot change a protected metatable")
             return table.setmetatable(if (metatable.isnil()) null else metatable.checktable())
+        }
+
+        override suspend fun suspendableCall(table: LuaValue, metatable: LuaValue): LuaValue {
+            return call(table, metatable)
         }
     }
 
@@ -359,6 +415,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
             if (b < 2 || b > 36)
                 LuaValue.argerror(2, "base out of range")
             return e.checkstring()!!.tonumber(b)
+        }
+
+        override suspend fun suspendableCall(e: LuaValue, base: LuaValue): LuaValue {
+            return call(e, base)
         }
     }
 
@@ -405,12 +465,20 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
                 t.errorfunc = preverror
             }
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "pairs" (t) -> iter-func, t, nil
     internal class Pairs(val next: Next) : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return LuaValue.varargsOf(next, args.checktable(1)!!, LuaValue.NIL)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -420,6 +488,10 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
         override fun invoke(args: Varargs): Varargs {
             return LuaValue.varargsOf(inext, args.checktable(1)!!, LuaValue.ZERO)
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "next"  ( table, [index] ) -> next-index, next-value
@@ -427,12 +499,20 @@ open class BaseLib : TwoArgFunction(), ResourceFinder {
         override fun invoke(args: Varargs): Varargs {
             return args.checktable(1)!!.next(args.arg(2))
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     // "inext" ( table, [int-index] ) -> next-index, next-value
     internal class inext : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return args.checktable(1)!!.inext(args.arg(2))
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

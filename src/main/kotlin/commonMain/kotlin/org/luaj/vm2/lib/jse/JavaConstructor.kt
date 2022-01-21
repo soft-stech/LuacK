@@ -59,6 +59,10 @@ internal class JavaConstructor private constructor(@Transient val constructor: C
 
     }
 
+    override suspend fun invokeSuspend(args: Varargs): Varargs{
+        return invoke(args)
+    }
+
     /**
      * LuaValue that represents an overloaded Java constructor.
      *
@@ -91,6 +95,10 @@ internal class JavaConstructor private constructor(@Transient val constructor: C
 
             // invoke it
             return best!!.invoke(args)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

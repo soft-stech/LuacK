@@ -130,6 +130,10 @@ open class MathLib : TwoArgFunction() {
         return math
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     abstract class UnaryOp : OneArgFunction() {
         override fun call(arg: LuaValue): LuaValue {
             return LuaValue.valueOf(call(arg.checkdouble()))
@@ -141,6 +145,10 @@ open class MathLib : TwoArgFunction() {
     abstract class BinaryOp : TwoArgFunction() {
         override fun call(x: LuaValue, y: LuaValue): LuaValue {
             return LuaValue.valueOf(call(x.checkdouble(), y.checkdouble()))
+        }
+
+        override suspend fun suspendableCall(x: LuaValue, y: LuaValue): LuaValue {
+            return call(x, y)
         }
 
         protected abstract fun call(x: Double, y: Double): Double
@@ -236,6 +244,10 @@ open class MathLib : TwoArgFunction() {
             val e = (((bits shr 52).toInt() and 0x7ff) - 1022).toDouble()
             return LuaValue.varargsOf(LuaValue.valueOf(m), LuaValue.valueOf(e))
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     internal class max : VarArgFunction() {
@@ -248,6 +260,10 @@ open class MathLib : TwoArgFunction() {
                 ++i
             }
             return LuaValue.valueOf(m)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -262,6 +278,10 @@ open class MathLib : TwoArgFunction() {
             }
             return LuaValue.valueOf(m)
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     internal class modf : VarArgFunction() {
@@ -270,6 +290,10 @@ open class MathLib : TwoArgFunction() {
             val intPart = if (x > 0) kotlin.math.floor(x) else kotlin.math.ceil(x)
             val fracPart = x - intPart
             return LuaValue.varargsOf(LuaValue.valueOf(intPart), LuaValue.valueOf(fracPart))
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -290,6 +314,10 @@ open class MathLib : TwoArgFunction() {
             val n = b.checkint()
             if (n < m) LuaValue.argerror(2, "interval is empty")
             return LuaValue.valueOf(m + random.nextInt(n + 1 - m))
+        }
+
+        override suspend fun suspendableCall(a: LuaValue, b: LuaValue): LuaValue {
+            return call(a, b)
         }
 
     }

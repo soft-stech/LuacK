@@ -141,6 +141,10 @@ class LuaScriptEngine : AbstractScriptEngine(), ScriptEngine, Compilable {
             this.rawset(LuaValue.INDEX, object : TwoArgFunction() {
                 override fun call(table: LuaValue, key: LuaValue): LuaValue =
                     if (key.isstring()) toLua(bindings[key.tojstring()]) else this.rawget(key)
+
+                override suspend fun suspendableCall(table: LuaValue, key: LuaValue): LuaValue {
+                    return call(table, key)
+                }
             })
             this.rawset(LuaValue.NEWINDEX, object : ThreeArgFunction() {
                 override fun call(table: LuaValue, key: LuaValue, value: LuaValue): LuaValue {

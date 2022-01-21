@@ -109,6 +109,10 @@ class StringLib : TwoArgFunction() {
         return string
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     /**
      * string.byte (s [, i [, j]])
      *
@@ -137,6 +141,10 @@ class StringLib : TwoArgFunction() {
                 LuaValue.error("string slice too long")
             return LuaValue.varargsOf(Array<LuaValue>(n) { LuaValue.valueOf(s.luaByte(posi + it - 1)) })
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     /**
@@ -164,6 +172,10 @@ class StringLib : TwoArgFunction() {
                 a++
             }
             return LuaString.valueUsing(bytes)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -209,6 +221,10 @@ class StringLib : TwoArgFunction() {
     internal class Find : VarArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return str_find_aux(args, true)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -278,6 +294,10 @@ class StringLib : TwoArgFunction() {
             }
 
             return result.tostring()
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -465,6 +485,10 @@ class StringLib : TwoArgFunction() {
             val pat = args.checkstring(2)
             return GMatchAux(args, src!!, pat!!)
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     internal class GMatchAux(args: Varargs, src: LuaString, pat: LuaString) : VarArgFunction() {
@@ -484,6 +508,10 @@ class StringLib : TwoArgFunction() {
                 soffset++
             }
             return LuaValue.NIL
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -566,6 +594,10 @@ class StringLib : TwoArgFunction() {
             lbuf.append(src.substring(soffset, srclen))
             return LuaValue.varargsOf(lbuf.tostring(), LuaValue.valueOf(n))
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     /**
@@ -606,6 +638,10 @@ class StringLib : TwoArgFunction() {
         override fun invoke(args: Varargs): Varargs {
             return str_find_aux(args, false)
         }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
+        }
     }
 
     /**
@@ -625,6 +661,10 @@ class StringLib : TwoArgFunction() {
                 offset += len
             }
             return LuaString.valueUsing(bytes)
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 
@@ -678,6 +718,10 @@ class StringLib : TwoArgFunction() {
             } else {
                 LuaValue.EMPTYSTRING
             }
+        }
+
+        override suspend fun invokeSuspend(args: Varargs): Varargs{
+            return invoke(args)
         }
     }
 

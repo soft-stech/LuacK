@@ -152,6 +152,10 @@ class LuajavaLib : VarArgFunction() {
 
     }
 
+    override suspend fun invokeSuspend(args: Varargs): Varargs{
+        return invoke(args)
+    }
+
     // load classes using app loader to allow luaj to be used as an extension
 
     protected fun classForName(name: String?): Class<*> {

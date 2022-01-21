@@ -93,6 +93,10 @@ class JseMathLib : org.luaj.vm2.lib.MathLib() {
         return math
     }
 
+    override suspend fun suspendableCall(modname: LuaValue, env: LuaValue): LuaValue {
+        return call(modname, env)
+    }
+
     internal class acos : MathLib.UnaryOp() {
         override fun call(d: Double): Double {
             return Math.acos(d)

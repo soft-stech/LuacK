@@ -64,11 +64,19 @@ abstract class ZeroArgFunction : LibFunction() {
         return call()
     }
 
+    override suspend fun suspendableCall(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return call(arg1, arg2)
+    }
+
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         return call()
     }
 
-    override fun invoke(varargs: Varargs): Varargs {
+    override fun invoke(args: Varargs): Varargs {
         return call()
+    }
+
+    override suspend fun invokeSuspend(args: Varargs): Varargs{
+        return invoke(args)
     }
 } 

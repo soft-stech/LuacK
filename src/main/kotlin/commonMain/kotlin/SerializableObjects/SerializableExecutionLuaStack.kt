@@ -38,12 +38,17 @@ class SerializableExecutionLuaStack : java.io.Serializable {
     /**
      * Отметка о том что пользователь положил трубку
      */
-    var userEndCall = false
+    private var userEndCall = false
+
+    /**
+     * Достигнута ли последняя строчка кода
+     */
+    private var endOfScript = true
 
     /**
      * Функция, вызываемая при завершении зваонка пользователем
      */
-    var userEndCallClosure: LuaClosure? = null
+    private var userEndCallClosure: LuaClosure? = null
 
     fun getScriptStartTime(): Long {
         return scriptStartTime
@@ -73,8 +78,27 @@ class SerializableExecutionLuaStack : java.io.Serializable {
         return returnValue
     }
 
-    fun SetReturnValue(valueOf: LuaString) {
+    fun setReturnValue(valueOf: LuaString) {
         returnValue = valueOf
     }
 
+    fun setUserEndCallClosure(item: LuaClosure){
+        userEndCallClosure = item
+    }
+
+    fun getUserEndCallClosure(): LuaClosure?{
+        return userEndCallClosure
+    }
+
+    fun getUserEndCall() : Boolean = userEndCall
+
+    fun setUserEndCall(value : Boolean) {
+        userEndCall = value
+    }
+
+    fun getEndOfScript() : Boolean = endOfScript
+
+    fun setEndOfScript(value : Boolean) {
+        endOfScript = value
+    }
 }
