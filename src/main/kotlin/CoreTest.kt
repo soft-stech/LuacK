@@ -9,19 +9,19 @@ import java.io.Serializable
 import kotlinx.coroutines.*
 
 class CoreTest()  : Serializable {
-    suspend fun TestTest(){
+    suspend fun coreFun(){
         println("start delay")
-        delay(500)
+        coreDelay(500)
         println("end delay")
         val executionStack = luaClosure?.getExecutionContext()
-        File("filename1.txt").writeBytes(serializeExecutionContext(executionStack))
+        File("context").writeBytes(serializeExecutionContext(executionStack))
         luaClosure?.stop()
         luaClosure = null
     }
 
-    suspend fun delay(msec: Long, msec2: Long, msec3: Long, msec4: Long, msec5: Long, msec6: Long, msec7: Long){
-        println("start delay $msec $msec2 $msec3 $msec4 $msec5 $msec6 $msec7")
-        //delay(msec)
+    suspend fun coreDelay(msec: Long){
+        println("start delay $msec")
+        delay(msec)
         println("end delay")
     }
 
