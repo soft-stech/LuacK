@@ -262,7 +262,7 @@ class StringLib : TwoArgFunction() {
             var i = 0
             while (i < n) {
                 when (run { c = fmt.luaByte(i++); c }) {
-                    '\n'.toInt() -> result.append("\n")
+                    '\n'.code -> result.append("\n")
                     L_ESC -> if (i < n) {
                         if ((run { c = fmt.luaByte(i); c }) == L_ESC) {
                             ++i
@@ -336,22 +336,22 @@ class StringLib : TwoArgFunction() {
 
             width = -1
             if (c.toChar().isDigit()) {
-                width = c - '0'.toInt()
+                width = c - '0'.code
                 c = if (p < n) strfrmt.luaByte(p++) else 0
                 if (c.toChar().isDigit()) {
-                    width = width * 10 + (c - '0'.toInt())
+                    width = width * 10 + (c - '0'.code)
                     c = if (p < n) strfrmt.luaByte(p++) else 0
                 }
             }
 
             precision = -1
-            if (c == '.'.toInt()) {
+            if (c == '.'.code) {
                 c = if (p < n) strfrmt.luaByte(p++) else 0
                 if (c.toChar().isDigit()) {
-                    precision = c - '0'.toInt()
+                    precision = c - '0'.code
                     c = if (p < n) strfrmt.luaByte(p++) else 0
                     if (c.toChar().isDigit()) {
-                        precision = precision * 10 + (c - '0'.toInt())
+                        precision = precision * 10 + (c - '0'.code)
                         c = if (p < n) strfrmt.luaByte(p++) else 0
                     }
                 }
@@ -383,8 +383,8 @@ class StringLib : TwoArgFunction() {
                     else -> radix = 10
                 }
                 digits = number.toString(radix)
-                if (conversion == 'X'.toInt())
-                    digits = digits.toUpperCase()
+                if (conversion == 'X'.code)
+                    digits = digits.uppercase()
             }
 
             var minwidth = digits.length
@@ -412,13 +412,13 @@ class StringLib : TwoArgFunction() {
 
             if (number < 0) {
                 if (nzeros > 0) {
-                    buf.append('-'.toByte())
+                    buf.append('-'.code.toByte())
                     digits = digits.substring(1)
                 }
             } else if (explicitPlus) {
-                buf.append('+'.toByte())
+                buf.append('+'.code.toByte())
             } else if (space) {
-                buf.append(' '.toByte())
+                buf.append(' '.code.toByte())
             }
 
             if (nzeros > 0)
@@ -437,7 +437,7 @@ class StringLib : TwoArgFunction() {
 
         fun format(buf: Buffer, s: LuaString) {
             var s = s
-            val nullindex = s.indexOf('\u0000'.toByte(), 0)
+            val nullindex = s.indexOf('\u0000'.code.toByte(), 0)
             if (nullindex != -1)
                 s = s.substring(0, nullindex)
             buf.append(s)
@@ -448,7 +448,7 @@ class StringLib : TwoArgFunction() {
 
             fun pad(buf: Buffer, c: Char, n: Int) {
                 var n = n
-                val b = c.toByte()
+                val b = c.code.toByte()
                 while (n-- > 0)
                     buf.append(b)
             }
@@ -568,7 +568,7 @@ class StringLib : TwoArgFunction() {
             val p = args.checkstring(2)
             val repl = args.arg(3)
             val max_s = args.optint(4, srclen + 1)
-            val anchor = p!!.length() > 0 && p.charAt(0) == '^'.toInt()
+            val anchor = p!!.length() > 0 && p.charAt(0) == '^'.code
 
             val lbuf = Buffer(srclen)
             val ms = MatchState(args, src, p)
@@ -621,7 +621,7 @@ class StringLib : TwoArgFunction() {
      */
     internal class Lower : OneArgFunction() {
         override fun call(arg: LuaValue): LuaValue {
-            return LuaValue.valueOf(arg.checkjstring()!!.toLowerCase())
+            return LuaValue.valueOf(arg.checkjstring()!!.lowercase())
         }
     }
 
@@ -734,7 +734,7 @@ class StringLib : TwoArgFunction() {
      */
     internal class Upper : OneArgFunction() {
         override fun call(arg: LuaValue): LuaValue {
-            return LuaValue.valueOf(arg.checkjstring()!!.toUpperCase())
+            return LuaValue.valueOf(arg.checkjstring()!!.uppercase())
         }
     }
 
@@ -757,12 +757,12 @@ class StringLib : TwoArgFunction() {
                 } else {
                     ++i // skip ESC
                     b = news.luaByte(i).toByte()
-                    if (!b.toChar().isDigit()) {
+                    if (!b.toInt().toChar().isDigit()) {
                         lbuf.append(b)
-                    } else if (b == '0'.toByte()) {
+                    } else if (b == '0'.code.toByte()) {
                         lbuf.append(s.substring(soff, e))
                     } else {
-                        lbuf.append(push_onecapture(b - '1'.toByte(), soff, e).strvalue()!!)
+                        lbuf.append(push_onecapture(b - '1'.code.toByte(), soff, e).strvalue()!!)
                     }
                 }
                 ++i
@@ -830,7 +830,7 @@ class StringLib : TwoArgFunction() {
 
         private fun check_capture(l: Int): Int {
             var l = l
-            l -= '1'.toInt()
+            l -= '1'.code
             if (l < 0 || l >= level || this.clen[l] == CAP_UNFINISHED) {
                 LuaValue.error("invalid capture index")
             }
@@ -859,15 +859,15 @@ class StringLib : TwoArgFunction() {
                     return poffset + 1
                 }
 
-                '['.toInt() -> {
-                    if (p.luaByte(poffset) == '^'.toInt()) poffset++
+                '['.code -> {
+                    if (p.luaByte(poffset) == '^'.code) poffset++
                     do {
                         if (poffset == p.length()) {
                             LuaValue.error("malformed pattern (missing ])")
                         }
                         if (p.luaByte(poffset++) == L_ESC && poffset != p.length())
                             poffset++
-                    } while (p.luaByte(poffset) != ']'.toInt())
+                    } while (p.luaByte(poffset) != ']'.code)
                     return poffset + 1
                 }
                 else -> return poffset
@@ -877,7 +877,7 @@ class StringLib : TwoArgFunction() {
         fun matchbracketclass(c: Int, poff: Int, ec: Int): Boolean {
             var poff = poff
             var sig = true
-            if (p.luaByte(poff + 1) == '^'.toInt()) {
+            if (p.luaByte(poff + 1) == '^'.code) {
                 sig = false
                 poff++
             }
@@ -886,7 +886,7 @@ class StringLib : TwoArgFunction() {
                     poff++
                     if (match_class(c, p.luaByte(poff)))
                         return sig
-                } else if (p.luaByte(poff + 1) == '-'.toInt() && poff + 2 < ec) {
+                } else if (p.luaByte(poff + 1) == '-'.code && poff + 2 < ec) {
                     poff += 2
                     if (p.luaByte(poff - 2) <= c && c <= p.luaByte(poff))
                         return sig
@@ -897,9 +897,9 @@ class StringLib : TwoArgFunction() {
 
         fun singlematch(c: Int, poff: Int, ep: Int): Boolean {
             when (p.luaByte(poff)) {
-                '.'.toInt() -> return true
+                '.'.code -> return true
                 L_ESC -> return match_class(c, p.luaByte(poff + 1))
-                '['.toInt() -> return matchbracketclass(c, poff, ep - 1)
+                '['.code -> return matchbracketclass(c, poff, ep - 1)
                 else -> return p.luaByte(poff) == c
             }
         }
@@ -918,24 +918,24 @@ class StringLib : TwoArgFunction() {
                 if (poffset == p.length())
                     return soffset
                 when (p.luaByte(poffset)) {
-                    '('.toInt() -> return if (++poffset < p.length() && p.luaByte(poffset) == ')'.toInt())
+                    '('.code -> return if (++poffset < p.length() && p.luaByte(poffset) == ')'.code)
                         start_capture(soffset, poffset + 1, CAP_POSITION)
                     else
                         start_capture(soffset, poffset, CAP_UNFINISHED)
-                    ')'.toInt() -> return end_capture(soffset, poffset + 1)
+                    ')'.code -> return end_capture(soffset, poffset + 1)
                     L_ESC -> {
                         if (poffset + 1 == p.length())
                             LuaValue.error("malformed pattern (ends with '%')")
                         when (p.luaByte(poffset + 1)) {
-                            'b'.toInt() -> {
+                            'b'.code -> {
                                 soffset = matchbalance(soffset, poffset + 2)
                                 if (soffset == -1) return -1
                                 poffset += 4
                                 continue@loop2
                             }
-                            'f'.toInt() -> {
+                            'f'.code -> {
                                 poffset += 2
-                                if (p.luaByte(poffset) != '['.toInt()) {
+                                if (p.luaByte(poffset) != '['.code) {
                                     LuaValue.error("Missing [ after %f in pattern")
                                 }
                                 val ep = classend(poffset)
@@ -961,24 +961,24 @@ class StringLib : TwoArgFunction() {
                         if (poffset + 1 == p.length())
                             return if (soffset == s.length()) soffset else -1
                     }
-                    '$'.toInt() -> if (poffset + 1 == p.length())
+                    '$'.code -> if (poffset + 1 == p.length())
                         return if (soffset == s.length()) soffset else -1
                 }
                 val ep = classend(poffset)
                 val m = soffset < s.length() && singlematch(s.luaByte(soffset), poffset, ep)
-                val pc = if (ep < p.length()) p.luaByte(ep).toInt() else '\u0000'.toInt()
+                val pc = if (ep < p.length()) p.luaByte(ep).toInt() else '\u0000'.code
 
                 when (pc) {
-                    '?'.toInt() -> {
+                    '?'.code -> {
                         var res: Int = 0
                         if (m && (run { res = match(soffset + 1, ep + 1); res }) != -1)
                             return res
                         poffset = ep + 1
                         continue@loop2
                     }
-                    '*'.toInt() -> return max_expand(soffset, poffset, ep)
-                    '+'.toInt() -> return if (m) max_expand(soffset + 1, poffset, ep) else -1
-                    '-'.toInt() -> return min_expand(soffset, poffset, ep)
+                    '*'.code -> return max_expand(soffset, poffset, ep)
+                    '+'.code -> return if (m) max_expand(soffset + 1, poffset, ep) else -1
+                    '-'.code -> return min_expand(soffset, poffset, ep)
                     else -> {
                         if (!m)
                             return -1
@@ -1074,7 +1074,7 @@ class StringLib : TwoArgFunction() {
         companion object {
 
             fun match_class(c: Int, cl: Int): Boolean {
-                val lcl = cl.toChar().toLowerCase()
+                val lcl = cl.toChar().lowercase().toCharArray()[0]
                 val cdata = CHAR_TABLE[c].toInt()
 
                 val res: Boolean
@@ -1091,7 +1091,7 @@ class StringLib : TwoArgFunction() {
                     'z' -> res = c == 0
                     else -> return cl == c
                 }
-                return if (lcl.toInt() == cl) res else !res
+                return if (lcl.code == cl) res else !res
             }
         }
     }
@@ -1100,23 +1100,23 @@ class StringLib : TwoArgFunction() {
 
         private fun addquoted(buf: Buffer, s: LuaString) {
             var c: Int
-            buf.append('"'.toByte())
+            buf.append('"'.code.toByte())
             var i = 0
             val n = s.length()
             while (i < n) {
                 when (run { c = s.luaByte(i); c }.toChar()) {
                     '"', '\\', '\n' -> {
-                        buf.append('\\'.toByte())
+                        buf.append('\\'.code.toByte())
                         buf.append(c.toByte())
                     }
                     else -> if (c <= 0x1F || c == 0x7F) {
-                        buf.append('\\'.toByte())
-                        if (i + 1 == n || s.luaByte(i + 1) < '0'.toInt() || s.luaByte(i + 1) > '9'.toInt()) {
+                        buf.append('\\'.code.toByte())
+                        if (i + 1 == n || s.luaByte(i + 1) < '0'.code || s.luaByte(i + 1) > '9'.code) {
                             buf.append(c.toString(10))
                         } else {
-                            buf.append('0'.toByte())
-                            buf.append(('0'.toInt() + c / 10).toChar().toByte())
-                            buf.append(('0'.toInt() + c % 10).toChar().toByte())
+                            buf.append('0'.code.toByte())
+                            buf.append(('0'.code + c / 10).toChar().code.toByte())
+                            buf.append(('0'.code + c % 10).toChar().code.toByte())
                         }
                     } else {
                         buf.append(c.toByte())
@@ -1155,7 +1155,7 @@ class StringLib : TwoArgFunction() {
 
                 var anchor = false
                 var poff = 0
-                if (pat!!.luaByte(0) == '^'.toInt()) {
+                if (pat!!.luaByte(0) == '^'.code) {
                     anchor = true
                     poff = 1
                 }
@@ -1186,7 +1186,7 @@ class StringLib : TwoArgFunction() {
 
         // Pattern matching implementation
 
-        private val L_ESC: Int = '%'.toInt()
+        private val L_ESC: Int = '%'.code
         private val SPECIALS = LuaValue.valueOf("^$*+?.([%-")
         private const val MAX_CAPTURES = 32
 
@@ -1208,7 +1208,7 @@ class StringLib : TwoArgFunction() {
                 CHAR_TABLE[i] = ((if (c.isDigit()) MASK_DIGIT else 0).toInt() or
                     (if (c.isLowerCase()) MASK_LOWERCASE else 0).toInt() or
                     (if (c.isUpperCase()) MASK_UPPERCASE else 0).toInt() or
-                    (if (c < ' ' || c.toInt() == 0x7F) MASK_CONTROL else 0).toInt()).toByte()
+                    (if (c < ' ' || c.code == 0x7F) MASK_CONTROL else 0).toInt()).toByte()
                 if (c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F' || c >= '0' && c <= '9') {
                     CHAR_TABLE[i] = (CHAR_TABLE[i].toInt() or MASK_HEXDIGIT).toByte()
                 }
@@ -1220,12 +1220,12 @@ class StringLib : TwoArgFunction() {
                 }
             }
 
-            CHAR_TABLE[' '.toInt()] = MASK_SPACE.toByte()
-            CHAR_TABLE['\r'.toInt()] = (CHAR_TABLE['\r'.toInt()].toInt() or MASK_SPACE).toByte()
-            CHAR_TABLE['\n'.toInt()] = (CHAR_TABLE['\n'.toInt()].toInt() or MASK_SPACE).toByte()
-            CHAR_TABLE['\t'.toInt()] = (CHAR_TABLE['\t'.toInt()].toInt() or MASK_SPACE).toByte()
+            CHAR_TABLE[' '.code] = MASK_SPACE.toByte()
+            CHAR_TABLE['\r'.code] = (CHAR_TABLE['\r'.code].toInt() or MASK_SPACE).toByte()
+            CHAR_TABLE['\n'.code] = (CHAR_TABLE['\n'.code].toInt() or MASK_SPACE).toByte()
+            CHAR_TABLE['\t'.code] = (CHAR_TABLE['\t'.code].toInt() or MASK_SPACE).toByte()
             CHAR_TABLE[0x0C /* '\v' */] = (CHAR_TABLE[0x0C].toInt() or MASK_SPACE).toByte()
-            CHAR_TABLE['\u000c'.toInt()] = (CHAR_TABLE['\u000c'.toInt()].toInt() or MASK_SPACE).toByte()
+            CHAR_TABLE['\u000c'.code] = (CHAR_TABLE['\u000c'.code].toInt() or MASK_SPACE).toByte()
         }
     }
 }

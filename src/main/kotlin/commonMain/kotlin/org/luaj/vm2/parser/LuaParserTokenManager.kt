@@ -53,7 +53,7 @@ class LuaParserTokenManager
                         0 -> {
                             try {
                                 input_stream.backup(0)
-                                while (curChar.toInt() <= 32 && 0x100003600L and (1L shl curChar.toInt()) != 0L)
+                                while (curChar.code <= 32 && 0x100003600L and (1L shl curChar.code) != 0L)
                                     curChar = input_stream.BeginToken()
                             } catch (e1: IOException) {
                                 continue@EOFLoop
@@ -233,7 +233,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_2(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_2(0x40000L)
             else -> return 1
         }
@@ -246,7 +246,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x40000L != 0L)
                 return jjStopAtPos(1, 18)
             else -> return 2
@@ -268,40 +268,40 @@ class LuaParserTokenManager
         while (true) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds()
-            if (curChar.toInt() < 64) {
-                val l = 1L shl curChar.toInt()
+            if (curChar.code < 64) {
+                val l = 1L shl curChar.code
                 do {
                     when (jjstateSet[--i]) {
-                        0, 1 -> if (curChar.toInt() == 61)
+                        0, 1 -> if (curChar.code == 61)
                             jjCheckNAddTwoStates(1, 2)
-                        3 -> if (curChar.toInt() == 61)
+                        3 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 0
-                        4 -> if (curChar.toInt() == 61)
+                        4 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 3
-                        5 -> if (curChar.toInt() == 61)
+                        5 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 4
                         else -> {
                         }
                     }
                 } while (i != startsAt)
-            } else if (curChar.toInt() < 128) {
-                val l = 1L shl (curChar.toInt() and 63)
+            } else if (curChar.code < 128) {
+                val l = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
-                        2 -> if (curChar.toInt() == 93 && kind > 27)
+                        2 -> if (curChar.code == 93 && kind > 27)
                             kind = 27
-                        6 -> if (curChar.toInt() == 93)
+                        6 -> if (curChar.code == 93)
                             jjstateSet[jjnewStateCnt++] = 5
                         else -> {
                         }
                     }
                 } while (i != startsAt)
             } else {
-                val hiByte = curChar.toInt() shr 8
+                val hiByte = curChar.code shr 8
                 val i1 = hiByte shr 6
                 val l1 = 1L shl (hiByte and 63)
-                val i2 = curChar.toInt() and 0xff shr 6
-                val l2 = 1L shl (curChar.toInt() and 63)
+                val i2 = curChar.code and 0xff shr 6
+                val l2 = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         else -> {
@@ -327,7 +327,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_10(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_10(0x4000000L)
             else -> return 1
         }
@@ -340,7 +340,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_10(active0, 0x4000000L)
             else -> return 2
         }
@@ -357,7 +357,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa3_10(active0, 0x4000000L)
             else -> return 3
         }
@@ -374,7 +374,7 @@ class LuaParserTokenManager
             return 3
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa4_10(active0, 0x4000000L)
             else -> return 4
         }
@@ -391,7 +391,7 @@ class LuaParserTokenManager
             return 4
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x4000000L != 0L)
                 return jjStopAtPos(4, 26)
             else -> return 5
@@ -400,7 +400,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_9(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_9(0x2000000L)
             else -> return 1
         }
@@ -413,7 +413,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_9(active0, 0x2000000L)
             else -> return 2
         }
@@ -430,7 +430,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa3_9(active0, 0x2000000L)
             else -> return 3
         }
@@ -447,7 +447,7 @@ class LuaParserTokenManager
             return 3
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x2000000L != 0L)
                 return jjStopAtPos(3, 25)
             else -> return 4
@@ -456,7 +456,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_8(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_8(0x1000000L)
             else -> return 1
         }
@@ -469,7 +469,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_8(active0, 0x1000000L)
             else -> return 2
         }
@@ -486,7 +486,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x1000000L != 0L)
                 return jjStopAtPos(2, 24)
             else -> return 3
@@ -495,7 +495,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_7(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_7(0x800000L)
             else -> return 1
         }
@@ -508,7 +508,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x800000L != 0L)
                 return jjStopAtPos(1, 23)
             else -> return 2
@@ -610,7 +610,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_0(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             35 -> return jjStopAtPos(0, 69)
             37 -> return jjStopAtPos(0, 87)
             40 -> return jjStopAtPos(0, 75)
@@ -679,7 +679,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             45 -> {
                 if (active0 and 0x10000L != 0L) {
                     jjmatchedKind = 16
@@ -766,7 +766,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             46 -> if (active1 and 0x8000L != 0L)
                 return jjStopAtPos(2, 79)
             61 -> return jjMoveStringLiteralDfa3_0(active0, 0x6000L, active1, 0L)
@@ -828,7 +828,7 @@ class LuaParserTokenManager
             return 3
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa4_0(active0, 0x4380L)
             91 -> if (active0 and 0x40L != 0L)
                 return jjStopAtPos(3, 6)
@@ -870,7 +870,7 @@ class LuaParserTokenManager
             return 4
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa5_0(active0, 0x300L)
             91 -> if (active0 and 0x80L != 0L)
                 return jjStopAtPos(4, 7)
@@ -908,7 +908,7 @@ class LuaParserTokenManager
             return 5
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa6_0(active0, 0x200L)
             91 -> if (active0 and 0x100L != 0L)
                 return jjStopAtPos(5, 8)
@@ -937,7 +937,7 @@ class LuaParserTokenManager
             return 6
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             91 -> if (active0 and 0x200L != 0L)
                 return jjStopAtPos(6, 9)
             111 -> return jjMoveStringLiteralDfa7_0(active0, 0x2000000000L)
@@ -959,7 +959,7 @@ class LuaParserTokenManager
             return 7
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             110 -> if (active0 and 0x2000000000L != 0L)
                 return jjStartNfaWithStates_0(7, 37, 17)
             else -> {
@@ -990,8 +990,8 @@ class LuaParserTokenManager
         while (true) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds()
-            if (curChar.toInt() < 64) {
-                val l = 1L shl curChar.toInt()
+            if (curChar.code < 64) {
+                val l = 1L shl curChar.code
                 do {
                     when (jjstateSet[--i]) {
                         8 -> {
@@ -1001,31 +1001,31 @@ class LuaParserTokenManager
                                         kind = 52
                                     jjCheckNAddStates(0, 3)
                                 }
-                                curChar.toInt() == 39 -> jjCheckNAddStates(4, 6)
-                                curChar.toInt() == 34 -> jjCheckNAddStates(7, 9)
-                                curChar.toInt() == 46 -> jjCheckNAdd(31)
-                                curChar.toInt() == 45 -> jjstateSet[jjnewStateCnt++] = 7
+                                curChar.code == 39 -> jjCheckNAddStates(4, 6)
+                                curChar.code == 34 -> jjCheckNAddStates(7, 9)
+                                curChar.code == 46 -> jjCheckNAdd(31)
+                                curChar.code == 45 -> jjstateSet[jjnewStateCnt++] = 7
                             }
-                            if (curChar.toInt() == 48)
+                            if (curChar.code == 48)
                                 jjstateSet[jjnewStateCnt++] = 19
                         }
-                        0, 1 -> if (curChar.toInt() == 61)
+                        0, 1 -> if (curChar.code == 61)
                             jjCheckNAddTwoStates(1, 2)
-                        3 -> if (curChar.toInt() == 61)
+                        3 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 0
-                        4 -> if (curChar.toInt() == 61)
+                        4 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 3
-                        5 -> if (curChar.toInt() == 61)
+                        5 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 4
-                        7 -> if (curChar.toInt() == 45)
+                        7 -> if (curChar.code == 45)
                             jjstateSet[jjnewStateCnt++] = 6
-                        9, 10 -> if (curChar.toInt() == 61)
+                        9, 10 -> if (curChar.code == 61)
                             jjCheckNAddTwoStates(10, 11)
-                        12 -> if (curChar.toInt() == 61)
+                        12 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 9
-                        13 -> if (curChar.toInt() == 61)
+                        13 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 12
-                        14 -> if (curChar.toInt() == 61)
+                        14 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 13
                         17 -> {
                             if (0x3ff000000000000L and l == 0L) {
@@ -1036,9 +1036,9 @@ class LuaParserTokenManager
                                 jjstateSet[jjnewStateCnt++] = 17
                             }
                         }
-                        18 -> if (curChar.toInt() == 48)
+                        18 -> if (curChar.code == 48)
                             jjstateSet[jjnewStateCnt++] = 19
-                        20 -> if (curChar.toInt() == 46)
+                        20 -> if (curChar.code == 46)
                             jjCheckNAdd(21)
                         21 -> {
                             if (0x3ff000000000000L and l == 0L) Unit else {
@@ -1067,7 +1067,7 @@ class LuaParserTokenManager
                         26 -> if (0x3ff000000000000L and l != 0L)
                             jjCheckNAddTwoStates(26, 27)
                         27 -> {
-                            if (curChar.toInt() != 46) Unit else {
+                            if (curChar.code != 46) Unit else {
                                 if (kind > 52)
                                     kind = 52
                                 jjCheckNAddTwoStates(28, 22)
@@ -1087,7 +1087,7 @@ class LuaParserTokenManager
                                 jjCheckNAddTwoStates(29, 22)
                             }
                         }
-                        30 -> if (curChar.toInt() == 46)
+                        30 -> if (curChar.code == 46)
                             jjCheckNAdd(31)
                         31 -> {
                             if (0x3ff000000000000L and l == 0L) Unit else {
@@ -1105,11 +1105,11 @@ class LuaParserTokenManager
                                 jjCheckNAdd(34)
                             }
                         }
-                        35 -> if (curChar.toInt() == 34)
+                        35 -> if (curChar.code == 34)
                             jjCheckNAddStates(7, 9)
                         36 -> if (-0x400000001L and l != 0L)
                             jjCheckNAddStates(7, 9)
-                        37 -> if (curChar.toInt() == 34 && kind > 61)
+                        37 -> if (curChar.code == 34 && kind > 61)
                             kind = 61
                         39 -> jjCheckNAddStates(7, 9)
                         41 -> if (0x3ff000000000000L and l != 0L)
@@ -1124,11 +1124,11 @@ class LuaParserTokenManager
                             jjCheckNAddStates(14, 17)
                         46 -> if (0x3ff000000000000L and l != 0L)
                             jjCheckNAddStates(18, 21)
-                        48 -> if (curChar.toInt() == 39)
+                        48 -> if (curChar.code == 39)
                             jjCheckNAddStates(4, 6)
                         49 -> if (-0x8000000001L and l != 0L)
                             jjCheckNAddStates(4, 6)
-                        50 -> if (curChar.toInt() == 39 && kind > 62)
+                        50 -> if (curChar.code == 39 && kind > 62)
                             kind = 62
                         52 -> jjCheckNAddStates(4, 6)
                         54 -> if (0x3ff000000000000L and l != 0L)
@@ -1153,7 +1153,7 @@ class LuaParserTokenManager
                         62 -> if (0x3ff000000000000L and l != 0L)
                             jjCheckNAddTwoStates(62, 63)
                         63 -> {
-                            if (curChar.toInt() != 46) Unit else {
+                            if (curChar.code != 46) Unit else {
                                 if (kind > 52)
                                     kind = 52
                                 jjCheckNAddTwoStates(64, 32)
@@ -1177,23 +1177,23 @@ class LuaParserTokenManager
                         }
                     }
                 } while (i != startsAt)
-            } else if (curChar.toInt() < 128) {
-                val l = 1L shl (curChar.toInt() and 63)
+            } else if (curChar.code < 128) {
+                val l = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         8 -> if (0x7fffffe87fffffeL and l != 0L) {
                             if (kind > 51)
                                 kind = 51
                             jjCheckNAdd(17)
-                        } else if (curChar.toInt() == 91)
+                        } else if (curChar.code == 91)
                             jjstateSet[jjnewStateCnt++] = 14
-                        2 -> if (curChar.toInt() == 91 && kind > 10)
+                        2 -> if (curChar.code == 91 && kind > 10)
                             kind = 10
-                        6 -> if (curChar.toInt() == 91)
+                        6 -> if (curChar.code == 91)
                             jjstateSet[jjnewStateCnt++] = 5
-                        11 -> if (curChar.toInt() == 91 && kind > 15)
+                        11 -> if (curChar.code == 91 && kind > 15)
                             kind = 15
-                        15 -> if (curChar.toInt() == 91)
+                        15 -> if (curChar.code == 91)
                             jjstateSet[jjnewStateCnt++] = 14
                         16, 17 -> {
                             if (0x7fffffe87fffffeL and l == 0L) Unit else {
@@ -1240,10 +1240,10 @@ class LuaParserTokenManager
                             jjAddStates(34, 35)
                         36 -> if (-0x10000001L and l != 0L)
                             jjCheckNAddStates(7, 9)
-                        38 -> if (curChar.toInt() == 92)
+                        38 -> if (curChar.code == 92)
                             jjAddStates(36, 38)
                         39 -> jjCheckNAddStates(7, 9)
-                        40 -> if (curChar.toInt() == 117)
+                        40 -> if (curChar.code == 117)
                             jjstateSet[jjnewStateCnt++] = 41
                         41 -> if (0x7e0000007eL and l != 0L)
                             jjstateSet[jjnewStateCnt++] = 42
@@ -1255,10 +1255,10 @@ class LuaParserTokenManager
                             jjCheckNAddStates(7, 9)
                         49 -> if (-0x10000001L and l != 0L)
                             jjCheckNAddStates(4, 6)
-                        51 -> if (curChar.toInt() == 92)
+                        51 -> if (curChar.code == 92)
                             jjAddStates(39, 41)
                         52 -> jjCheckNAddStates(4, 6)
-                        53 -> if (curChar.toInt() == 117)
+                        53 -> if (curChar.code == 117)
                             jjstateSet[jjnewStateCnt++] = 54
                         54 -> if (0x7e0000007eL and l != 0L)
                             jjstateSet[jjnewStateCnt++] = 55
@@ -1273,11 +1273,11 @@ class LuaParserTokenManager
                     }
                 } while (i != startsAt)
             } else {
-                val hiByte = curChar.toInt() shr 8
+                val hiByte = curChar.code shr 8
                 val i1 = hiByte shr 6
                 val l1 = 1L shl (hiByte and 63)
-                val i2 = curChar.toInt() and 0xff shr 6
-                val l2 = 1L shl (curChar.toInt() and 63)
+                val i2 = curChar.code and 0xff shr 6
+                val l2 = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         36, 39 -> if (jjCanMove_0(hiByte, i1, i2, l1, l2))
@@ -1320,8 +1320,8 @@ class LuaParserTokenManager
         while (true) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds()
-            if (curChar.toInt() < 64) {
-                val l = 1L shl curChar.toInt()
+            if (curChar.code < 64) {
+                val l = 1L shl curChar.code
                 do {
                     when (jjstateSet[--i]) {
                         4 -> {
@@ -1333,7 +1333,7 @@ class LuaParserTokenManager
                                 if (kind > 17)
                                     kind = 17
                             }
-                            if (curChar.toInt() == 13)
+                            if (curChar.code == 13)
                                 jjstateSet[jjnewStateCnt++] = 2
                         }
                         0 -> {
@@ -1344,16 +1344,16 @@ class LuaParserTokenManager
                         }
                         1 -> if (0x2400L and l != 0L && kind > 17)
                             kind = 17
-                        2 -> if (curChar.toInt() == 10 && kind > 17)
+                        2 -> if (curChar.code == 10 && kind > 17)
                             kind = 17
-                        3 -> if (curChar.toInt() == 13)
+                        3 -> if (curChar.code == 13)
                             jjstateSet[jjnewStateCnt++] = 2
                         else -> {
                         }
                     }
                 } while (i != startsAt)
-            } else if (curChar.toInt() < 128) {
-                val l = 1L shl (curChar.toInt() and 63)
+            } else if (curChar.code < 128) {
+                val l = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         4, 0 -> {
@@ -1365,11 +1365,11 @@ class LuaParserTokenManager
                     }
                 } while (i != startsAt)
             } else {
-                val hiByte = curChar.toInt() shr 8
+                val hiByte = curChar.code shr 8
                 val i1 = hiByte shr 6
                 val l1 = 1L shl (hiByte and 63)
-                val i2 = curChar.toInt() and 0xff shr 6
-                val l2 = 1L shl (curChar.toInt() and 63)
+                val i2 = curChar.code and 0xff shr 6
+                val l2 = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         4, 0 -> {
@@ -1415,40 +1415,40 @@ class LuaParserTokenManager
         while (true) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds()
-            if (curChar.toInt() < 64) {
-                val l = 1L shl curChar.toInt()
+            if (curChar.code < 64) {
+                val l = 1L shl curChar.code
                 do {
                     when (jjstateSet[--i]) {
-                        0, 1 -> if (curChar.toInt() == 61)
+                        0, 1 -> if (curChar.code == 61)
                             jjCheckNAddTwoStates(1, 2)
-                        3 -> if (curChar.toInt() == 61)
+                        3 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 0
-                        4 -> if (curChar.toInt() == 61)
+                        4 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 3
-                        5 -> if (curChar.toInt() == 61)
+                        5 -> if (curChar.code == 61)
                             jjstateSet[jjnewStateCnt++] = 4
                         else -> {
                         }
                     }
                 } while (i != startsAt)
-            } else if (curChar.toInt() < 128) {
-                val l = 1L shl (curChar.toInt() and 63)
+            } else if (curChar.code < 128) {
+                val l = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
-                        2 -> if (curChar.toInt() == 93 && kind > 22)
+                        2 -> if (curChar.code == 93 && kind > 22)
                             kind = 22
-                        6 -> if (curChar.toInt() == 93)
+                        6 -> if (curChar.code == 93)
                             jjstateSet[jjnewStateCnt++] = 5
                         else -> {
                         }
                     }
                 } while (i != startsAt)
             } else {
-                val hiByte = curChar.toInt() shr 8
+                val hiByte = curChar.code shr 8
                 val i1 = hiByte shr 6
                 val l1 = 1L shl (hiByte and 63)
-                val i2 = curChar.toInt() and 0xff shr 6
-                val l2 = 1L shl (curChar.toInt() and 63)
+                val i2 = curChar.code and 0xff shr 6
+                val l2 = 1L shl (curChar.code and 63)
                 do {
                     when (jjstateSet[--i]) {
                         else -> {
@@ -1474,7 +1474,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_5(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_5(0x200000L)
             else -> return 1
         }
@@ -1487,7 +1487,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_5(active0, 0x200000L)
             else -> return 2
         }
@@ -1504,7 +1504,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa3_5(active0, 0x200000L)
             else -> return 3
         }
@@ -1521,7 +1521,7 @@ class LuaParserTokenManager
             return 3
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa4_5(active0, 0x200000L)
             else -> return 4
         }
@@ -1538,7 +1538,7 @@ class LuaParserTokenManager
             return 4
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x200000L != 0L)
                 return jjStopAtPos(4, 21)
             else -> return 5
@@ -1547,7 +1547,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_4(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_4(0x100000L)
             else -> return 1
         }
@@ -1560,7 +1560,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_4(active0, 0x100000L)
             else -> return 2
         }
@@ -1577,7 +1577,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa3_4(active0, 0x100000L)
             else -> return 3
         }
@@ -1594,7 +1594,7 @@ class LuaParserTokenManager
             return 3
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x100000L != 0L)
                 return jjStopAtPos(3, 20)
             else -> return 4
@@ -1603,7 +1603,7 @@ class LuaParserTokenManager
     }
 
     private fun jjMoveStringLiteralDfa0_3(): Int {
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> return jjMoveStringLiteralDfa1_3(0x80000L)
             else -> return 1
         }
@@ -1616,7 +1616,7 @@ class LuaParserTokenManager
             return 1
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             61 -> return jjMoveStringLiteralDfa2_3(active0, 0x80000L)
             else -> return 2
         }
@@ -1633,7 +1633,7 @@ class LuaParserTokenManager
             return 2
         }
 
-        when (curChar.toInt()) {
+        when (curChar.code) {
             93 -> if (active0 and 0x80000L != 0L)
                 return jjStopAtPos(2, 19)
             else -> return 3

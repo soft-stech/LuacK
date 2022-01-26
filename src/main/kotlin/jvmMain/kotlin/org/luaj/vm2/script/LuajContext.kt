@@ -70,7 +70,7 @@ class LuajContext
     }
 
     override fun setReader(reader: Reader?) {
-        globals.STDIN = (reader?.let { ReaderInputStream(it) } ?: stdin) as InputStream
+        globals.STDIN = (reader?.let { ReaderInputStream(it) } ?: stdin)
     }
 
     override fun setWriter(writer: Writer?) {
