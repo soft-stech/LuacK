@@ -5,8 +5,8 @@ plugins {
     id 'maven-publish'
 }
 
-group 'ru.stech'
-version '1.5'
+group 'soft-stech'
+version '1.6'
 
 repositories {
     mavenCentral()
