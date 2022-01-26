@@ -1,14 +1,13 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.0'
-    id 'application'
-    id 'java-library'
-    id 'maven-publish'
+    id 'java'
 }
 
 group 'soft-stech'
-version '1.6'
+version '1.7'
 
 repositories {
+    mavenCentral()
     mavenCentral()
 }
 
@@ -16,8 +15,4 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0")
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = '11'
 }
